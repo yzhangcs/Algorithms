@@ -3,12 +3,28 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
+/**
+ * This class performs independent experiment, using the Percolation 
+ * data structure. Then compute the mean and standard deviation of results.
+ * It also provides method to compute confidence intervals for them.
+ * 
+ * @author zhangyu
+ * @date 2017.2.27
+ */
 public class PercolationStats 
 {
     private int trials;
     private double[] threshold;
     
-    public PercolationStats(int n, int trials) // perform trials independent experiments on an n-by-n grid
+    /**
+     * perform trials independent experiments on an n-by-n grid
+     * 
+     * @param  n size of created grid
+     * @param  trials times of experiments
+     * @throws IllegalArgumentException unless
+     *         both grid size and value of trials out of range
+     */
+    public PercolationStats(int n, int trials)
     {   
         if (n < 1) 
             throw new IllegalArgumentException("Grid size out of range");
@@ -31,23 +47,31 @@ public class PercolationStats
         }
     }
 
-    public double mean() // sample mean of percolation threshold
+    // sample mean of percolation threshold
+    public double mean()
     {
         return StdStats.mean(threshold);
     }
-    public double stddev() // sample standard deviation of percolation threshold
+    
+    // sample standard deviation of percolation threshold
+    public double stddev()
     {
         return StdStats.stddev(threshold);
     }
-    public double confidenceLo() // low  endpoint of 95% confidence interval
+    
+    // low  endpoint of 95% confidence interval
+    public double confidenceLo()
     {
         return mean() - 1.96*stddev() / Math.sqrt(trials);
     }
-    public double confidenceHi() // high endpoint of 95% confidence interval
+    
+    // high endpoint of 95% confidence interval
+    public double confidenceHi()
     {
         return mean() + 1.96*stddev() / Math.sqrt(trials);
     }
     
+    // test client (optional)
     public static void main(String[] args)
     {
         int n, trials;
