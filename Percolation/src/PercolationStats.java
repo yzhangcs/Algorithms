@@ -10,9 +10,9 @@ public class PercolationStats
     
     public PercolationStats(int n, int trials) // perform trials independent experiments on an n-by-n grid
     {   
-        if (n <= 0)
+        if (n < 1) 
             throw new IllegalArgumentException("Grid size out of range");
-        if (trials <= 0)
+        if (trials < 1) 
             throw new IllegalArgumentException("value of trials out of range");
         this.trials = trials;
         threshold = new double[trials];

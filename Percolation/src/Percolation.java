@@ -7,17 +7,16 @@ public class Percolation
     private int size; // size of created grid
     private int[] status; // record the status of each site
     private WeightedQuickUnionUF grid;
-    private WeightedQuickUnionUF gridWithoutVBottom;
+    private WeightedQuickUnionUF gridNoVBottom;
     
     public Percolation(int n) // create n-by-n grid, with all sites blocked
     {
-        if (n <= 0)
-            throw new IllegalArgumentException("Grid size out of range");
+        if (n < 1) throw new IllegalArgumentException("Grid size out of range");
         size = n;
         status = new int[n * n];
         for (int i = 0; i < n * n; i++) status[i] = 0;
         grid = new WeightedQuickUnionUF(n*n + 2);
-        gridWithoutVBottom = new WeightedQuickUnionUF(n*n + 1);
+        gridNoVBottom = new WeightedQuickUnionUF(n*n + 1);
     }
     public void open(int row, int col) // open site (row, col) if it is not open already
     {
@@ -28,7 +27,7 @@ public class Percolation
         if (1 == row) // connect to the virtual site
         {
             grid.union(idx, size * size);
-            gridWithoutVBottom.union(idx, size * size);
+            gridNoVBottom.union(idx, size * size);
         }
         if (size == row) grid.union(idx, size*size + 1);
         
@@ -48,7 +47,7 @@ public class Percolation
                     if (1 == status[adjPosIdx])
                     {
                         grid.union(idx, adjPosIdx);
-                        gridWithoutVBottom.union(idx, adjPosIdx);
+                        gridNoVBottom.union(idx, adjPosIdx);
                     }
                 }
             }
@@ -62,11 +61,7 @@ public class Percolation
     public boolean isFull(int row, int col) // is site (row, col) full?
     {
         validate(row, col);
-        
-        if (isOpen(row, col)) // only the open site can be full
-            return gridWithoutVBottom.connected(xyTo1D(row, col), size * size);
-        else 
-            return false;
+        return isOpen(row, col) && gridNoVBottom.connected(xyTo1D(row, col), size * size);
     }
     public int numberOfOpenSites() // number of open sites
     {
@@ -85,10 +80,8 @@ public class Percolation
     }
     private void validate(int row, int col) // validate that (row, col) is valid
     {
-        if (row < 1 || row > size) 
-            throw new IndexOutOfBoundsException("row index " + row + " out of bounds");
-        if (col < 1 || col > size) 
-            throw new IndexOutOfBoundsException("col index " + col + " out of bounds");  
+        if (row < 1 || row > size || col < 1 || col > size) 
+            throw new IndexOutOfBoundsException("index: (" + row + ", " + col + ") are out of bounds");
     }
     
     public static void main(String[] args)
