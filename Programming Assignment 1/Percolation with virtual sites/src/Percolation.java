@@ -18,7 +18,7 @@ public class Percolation
     
     /**
      * Initializes two WeightedQuickUnionUF object. One has two 
-     * virtual sites,and the other one has only one top site. 
+     * virtual sites, and the other one has only one top site. 
      * Set state of each site blocked.
      * 
      * @param  n size of created grid
