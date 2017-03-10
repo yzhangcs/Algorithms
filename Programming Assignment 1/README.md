@@ -31,9 +31,9 @@ Aggregate score: 96.25%
 ## **Percolation without virtual sites**  
 
 It generates only one **WeightedQuickUnionUF** object, without any virtual site.  
-Uses some flag bits to indicate _BLOCKED_, _OPEN_, _TOPCONNECTED_, _BOTTOMCONNECTED_,  
-and _PERCOLATED_ state. The grid will be _PERCOLATED_ when it is _TOPCONNECTED_ and  
-_BOTTOMCONNECTED_.  
+Uses some flag bits to indicate _**BLOCKED**_, _**OPEN**_, _**TOPCONNECTED**_, _**BOTTOMCONNECTED**_,  
+and _**PERCOLATED**_ state. The grid will be _**PERCOLATED**_ when it is _**TOPCONNECTED**_ and  
+_**BOTTOMCONNECTED**_.  
 This method works well on memory use.
   
 ```
