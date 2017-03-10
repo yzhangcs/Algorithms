@@ -4,8 +4,9 @@ import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
 /**
- * This class performs independent experiment, using the Percolation 
- * data structure. Then compute the mean and standard deviation of results.
+ * The {@code PercolationStats} class performs independent experiment, using 
+ * the Percolation data structure. Then compute the mean and standard 
+ * deviation of results.
  * It also provides method to compute confidence intervals for them.
  * 
  * @author zhangyu
@@ -47,31 +48,51 @@ public class PercolationStats
         }
     }
 
-    // sample mean of percolation threshold
+    /**
+     * Returns the sample mean of percolation threshold.
+     * 
+     * @return the sample mean of percolation threshold
+     */
     public double mean()
     {
         return StdStats.mean(threshold);
     }
     
-    // sample standard deviation of percolation threshold
+    /**
+     * Returns the sample standard deviation of percolation threshold.
+     * 
+     * @return the sample standard deviation of percolation threshold
+     */
     public double stddev()
     {
         return StdStats.stddev(threshold);
     }
     
-    // low  endpoint of 95% confidence interval
+    /**
+     * Returns the low endpoint of 95% confidence interval.
+     * 
+     * @return the low endpoint of 95% confidence interval.
+     */
     public double confidenceLo()
     {
         return mean() - 1.96*stddev() / Math.sqrt(trials);
     }
     
-    // high endpoint of 95% confidence interval
+    /**
+     * Returns the high endpoint of 95% confidence interval.
+     * 
+     * @return the high endpoint of 95% confidence interval.
+     */
     public double confidenceHi()
     {
         return mean() + 1.96*stddev() / Math.sqrt(trials);
     }
     
-    // test client (optional)
+    /**
+     * Unit tests the {@code PercolationStats} data type.
+     *
+     * @param args the command-line arguments
+     */
     public static void main(String[] args)
     {
         int n, trials;

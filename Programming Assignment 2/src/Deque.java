@@ -1,15 +1,23 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
+/**
+ * The {@code Deque} class represents a double-ended queue or deque (pronounced "deck"), 
+ * which is a generalization of a stack and a queue that supports adding and removing 
+ * items from either the front or the back of the data structure.
+ * This implementation uses a double-linked list with a non-static nested class for 
+ * linked-list nodes.
+ *  
+ * @author zhangyu
+ * @date 2017.3.10
+ */
 public class Deque<Item> implements Iterable<Item> 
 {
-    private int n;      // number of elements on queue
-    private Node first; // beginning of queue
-    private Node last;  // end of queue
+    private int n;      // number of elements on deque
+    private Node first; // beginning of deque
+    private Node last;  // end of deque
     private Node head;  // sentinel node
     
     // helper linked list class
@@ -19,25 +27,48 @@ public class Deque<Item> implements Iterable<Item>
         private Node next;
         private Node last;
     }
-    public Deque()                           // construct an empty deque
+    
+    /**
+     * Initializes an empty deque.
+     */
+    public Deque()
     {
-        first = null;
-        last  = null;
         head = new Node();
-        head.next = null;
+        head.next = first;
+        first = null;
+        last  = first;
         n = 0;
     }
-    public boolean isEmpty()                 // is the deque empty?
+    
+    /**
+     * Returns whether the deque is empty.
+     * 
+     * @return true if this deque is empty; false otherwise
+     */
+    public boolean isEmpty()
     {
         return head.next == null;
     }
-    public int size()                        // return the number of items on the deque
+    
+    /**
+     * Returns the number of items on this deque.
+     * 
+     * @return the number of items on this deque
+     */
+    public int size()
     {
         return n;
     }
-    public void addFirst(Item item)          // add the item to the front
+    
+    /**
+     * Add the item to the front of the deque.
+     * 
+     * @param item the item to add
+     * @throws NullPointerException if the item to be added is null
+     */
+    public void addFirst(Item item)
     {
-        if (item == null) throw new NullPointerException("null item");
+        if (item == null) throw new NullPointerException("Null item");
         Node oldFirst = first;
         
         first = new Node();
@@ -49,9 +80,16 @@ public class Deque<Item> implements Iterable<Item>
         head.next = first;
         n++;
     }
-    public void addLast(Item item)           // add the item to the end
+    
+    /**
+     * Add the item to the end of the deque.
+     * 
+     * @param item the item to add
+     * @throws NullPointerException if the item to be added is null
+     */
+    public void addLast(Item item)
     {
-        if (item == null) throw new NullPointerException("null item");
+        if (item == null) throw new NullPointerException("Null item");
         if (isEmpty()) addFirst(item);
         else
         {
@@ -65,7 +103,15 @@ public class Deque<Item> implements Iterable<Item>
             n++;
         }
     }
-    public Item removeFirst()                // remove and return the item from the front
+    
+    
+    /**
+     * Remove and return the item from the front of the deque.
+     * 
+     * @return the item on the front of this deque
+     * @throws NoSuchElementException if this deque is empty
+     */
+    public Item removeFirst()
     {
         if (isEmpty()) throw new NoSuchElementException("Deque underflow");
         
@@ -78,7 +124,14 @@ public class Deque<Item> implements Iterable<Item>
         n--;
         return item;                   // return the saved item
     }
-    public Item removeLast()                 // remove and return the item from the end
+    
+    /**
+     * Remove and return the item from the end of the deque.
+     * 
+     * @return the item on the end of this deque
+     * @throws NoSuchElementException if this deque is empty
+     */
+    public Item removeLast()
     {
         if (isEmpty()) throw new NoSuchElementException("Deque underflow");
         
@@ -86,14 +139,23 @@ public class Deque<Item> implements Iterable<Item>
         
         last = last.last;
         last.next = null;
-        if (isEmpty()) last = first;   // to avoid loitering
+        if (isEmpty()) last = first = null; // to avoid loitering  
         n--;
         return item;
     }
-    public Iterator<Item> iterator()         // return an iterator over items in order from front to end
+    
+    /**
+     * Returns an iterator over items in order from front to end.
+     * 
+     * @return an iterator over items in order from front to end
+     * @see java.lang.Iterable#iterator()
+     */
+    public Iterator<Item> iterator()
     {
         return new ListIterator();
     }
+    
+    // an iterator, doesn't implement remove() since it's optional
     private class ListIterator implements Iterator<Item>
     {
         private Node current = first;
@@ -110,24 +172,26 @@ public class Deque<Item> implements Iterable<Item>
             return item;
         }
     }
-    public static void main(String[] args)   // unit testing (optional)
+    
+    /**
+     * Unit tests the {@code Deque} data type.
+     *
+     * @param args the command-line arguments
+     */
+    public static void main(String[] args)
     {
-        Deque<Float> deque = new Deque<Float>();
-        In in = new In(args[0]);
-        
-        while (!in.isEmpty()) 
+        Deque<String> deque = new Deque<String>();
+       
+        while (!StdIn.isEmpty())
         {
-            float item = in.readFloat();
-            deque.addLast(item);
+            String item = StdIn.readString();
+            if (!item.equals("-"))
+                deque.addLast(item);
+            else if (!deque.isEmpty())
+                deque.removeFirst();
+            for (String str : deque)
+                StdOut.print(str + " ");
+            StdOut.println("\t" + deque.isEmpty());
         }
-        StdOut.println(deque.size());
-        deque.addFirst((float) 1);
-        StdOut.println(deque.removeLast());
-        StdOut.println(deque.isEmpty());
-        deque.addFirst((float) 4);
-        StdOut.println(deque.removeFirst());
-        StdOut.println(deque.size());
-        StdOut.println(deque.size());
-        StdOut.println(deque.isEmpty());
     }
 }

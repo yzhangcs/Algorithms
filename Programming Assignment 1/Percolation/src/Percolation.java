@@ -3,7 +3,7 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /**
- * This class provides methods for calculating the Percolation.
+ * The {@code Percolation} class provides methods for calculating the Percolation.
  * Create only one WeightedQuickUnionUF object to solve the backwash problem.
  * 
  * @author zhangyu
@@ -138,13 +138,7 @@ public class Percolation
         return percolate;
     }
     
-    /**
-     * map 2D coordinates to 1D coordinates
-     * 
-     * @param row abscissa of the grid 
-     * @param col ordinate of the grid
-     * @return index converted from the 2D coordinates
-     */
+    //map 2D coordinates to 1D coordinates 
     private int xyTo1D(int row, int col)
     {
         return (row - 1)*size + col - 1;
@@ -157,11 +151,16 @@ public class Percolation
             throw new IndexOutOfBoundsException("index: (" + row + ", " + col + ") are out of bounds");
     }
     
-    // test client (optional)
+    /**
+     * Unit tests the {@code Percolation} data type.
+     *
+     * @param args the command-line arguments
+     */
     public static void main(String[] args)
     {
         int n = StdIn.readInt();
         Percolation client = new Percolation(n);
+        
         while (!StdIn.isEmpty())
         {
             int row = StdIn.readInt();
