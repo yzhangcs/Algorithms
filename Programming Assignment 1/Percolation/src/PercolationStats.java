@@ -7,6 +7,7 @@ import edu.princeton.cs.algs4.StdStats;
  * The {@code PercolationStats} class performs independent experiment, using 
  * the Percolation data structure. Then compute the mean and standard 
  * deviation of results.
+ * <p>
  * It also provides method to compute confidence intervals for them.
  * 
  * @author zhangyu

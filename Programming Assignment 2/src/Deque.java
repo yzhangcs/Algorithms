@@ -7,6 +7,7 @@ import edu.princeton.cs.algs4.StdOut;
  * The {@code Deque} class represents a double-ended queue or deque (pronounced "deck"), 
  * which is a generalization of a stack and a queue that supports adding and removing 
  * items from either the front or the back of the data structure.
+ * <p>
  * This implementation uses a double-linked list with a non-static nested class for 
  * linked-list nodes.
  *  
@@ -34,9 +35,9 @@ public class Deque<Item> implements Iterable<Item>
     public Deque()
     {
         head = new Node();
-        head.next = first;
         first = null;
         last  = first;
+        head.next = first;
         n = 0;
     }
     
@@ -104,7 +105,6 @@ public class Deque<Item> implements Iterable<Item>
         }
     }
     
-    
     /**
      * Remove and return the item from the front of the deque.
      * 
@@ -115,14 +115,14 @@ public class Deque<Item> implements Iterable<Item>
     {
         if (isEmpty()) throw new NoSuchElementException("Deque underflow");
         
-        Item item = first.item;        // save item to return
+        Item item = first.item;     // save item to return
         
         first = first.next;
-        head.next = first;            // delete first node
-        if (isEmpty()) last = null;   // to avoid loitering
+        head.next = first;          // delete first node
+        if (isEmpty()) last = null; // to avoid loitering
         else           first.last = head;
         n--;
-        return item;                   // return the saved item
+        return item;                // return the saved item
     }
     
     /**
@@ -139,7 +139,7 @@ public class Deque<Item> implements Iterable<Item>
         
         last = last.last;
         last.next = null;
-        if (isEmpty()) last = first = null; // to avoid loitering  
+        if (isEmpty()) { first = null; last = first; } // to avoid loitering  
         n--;
         return item;
     }

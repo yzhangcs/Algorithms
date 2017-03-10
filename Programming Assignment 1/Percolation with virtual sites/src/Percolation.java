@@ -4,7 +4,8 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /**
  * The {@code Percolation} class provides methods for calculating the Percolation. 
- * Create two WeightedQuickUnionUF objects to solve the backwash problem.
+ * <p>
+ * Creates two WeightedQuickUnionUF objects to solve the backwash problem.
  * 
  * @author zhangyu
  * @date 2017.2.27

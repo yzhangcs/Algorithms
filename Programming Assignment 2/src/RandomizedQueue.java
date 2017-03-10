@@ -1,6 +1,5 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
@@ -9,6 +8,7 @@ import edu.princeton.cs.algs4.StdRandom;
  * The {@code RandomizedQueue} class represents a randomized queue, which is 
  * similar to a stack or queue, except that the item removed is chosen uniformly 
  * at random from items in the data structure.
+ * <p>
  * This implementation uses a resizing array, which double the underlying array
  * when it is full and halves the underlying array when it is one-quarter full.
  *
@@ -111,7 +111,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
     }
     
     /**
-     * Returns an independent iterator over items in random order¡£
+     * Returns an independent iterator over items in random order.
      * 
      * @return an independent iterator over items in random order
      * @see java.lang.Iterable#iterator()
