@@ -139,7 +139,11 @@ public class Deque<Item> implements Iterable<Item>
         
         last = last.last;
         last.next = null;
-        if (isEmpty()) { first = null; last = first; } // to avoid loitering  
+        if (isEmpty())  // to avoid loitering  
+        { 
+            first = null;
+            last = first; 
+        }
         n--;
         return item;
     }
