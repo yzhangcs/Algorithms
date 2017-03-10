@@ -4,7 +4,7 @@ Write a generic data type for a deque and a randomized queue. The goal of this a
 
 The implementation of **Deque** uses a double-linked list.  
 The implementation of **RandomizedQueue** uses a resizing array.  
-In **Permutation**, Create a **StringBuilder** object to read in a sequence of strings. Then convert the **StringBuilder** object to a string. Split the converted string into a string array and use a `permutation()` method in **StdRandom** to select randomized string indices. Finally, enqueue the selected randomized strings and traverse them. I've gota bonus here because of using only one **RandomizedQueue** object of maximum size at most k.
+In **Permutation**, Create a **StringBuilder** object to read in a sequence of strings. Then convert the **StringBuilder** object to a string. Split the converted string into a string array and use a `permutation()` method in **StdRandom** to select randomized string indices. Finally, enqueue the selected randomized strings and traverse them. I've got a bonus here because of using only one **RandomizedQueue** object of maximum size at most k.
 
 ```
 ASSESSMENT SUMMARY 
