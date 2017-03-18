@@ -1,33 +1,30 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Merge;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.Stopwatch;
 
+/**
+ * 
+ *
+ * @author zhangyu
+ * @date 2017.3.19
+ */
 public class FastCollinearPoints
 {
     private ArrayList<LineSegment> lineSgmts;
-//    private ArrayList<Point> endPointOfSgmts;
-//    private ArrayList<Double> slopeOfSgmts;
+    private Point[] pointSet;
     
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points)     
     {
-        if (points == null) throw new NullPointerException();
+        if (points == null) throw new NullPointerException("Null Point array");
         
-        Point[] pointSet = Arrays.copyOf(points, points.length);
+        int len = points.length;
         
+        pointSet = Arrays.copyOf(points, points.length);
         lineSgmts = new ArrayList<LineSegment>();
-//        endPointOfSgmts = new ArrayList<Point>();
-//        slopeOfSgmts = new ArrayList<Double>();
-        findCollinearPoints(pointSet);
-    }
-    
-    private void findCollinearPoints(Point[] pointSet)
-    {
-        int len = pointSet.length;
-        
         Merge.sort(pointSet);
         for (int i = 0; i < len - 1; ++i)
         {
@@ -44,38 +41,34 @@ public class FastCollinearPoints
                 slope = pointSet[i].slopeTo(subPointSet[j]);
                 if (lastSlope != slope)
                 {
-                    if (cnt >= 3) addSgmt(pointSet, i, subPointSet[j - 1]);
+                    if (cnt >= 3) addSgmt(pointSet[i], subPointSet[j - 1]);
                     cnt = 1;
                 }
                 else cnt++;
                 lastSlope = slope;
             }
-            if (cnt >= 3) addSgmt(pointSet, i, subPointSet[subLen - 1]);
+            if (cnt >= 3) addSgmt(pointSet[i], subPointSet[subLen - 1]);
         }
     }
     
+    // check whether or not duplicate point exists
     private void checkForDuplicates(Point p, Point q)
     {
-        if (p == null || q == null) throw new NullPointerException();
+        // ensure each point is not null
+        if (p == null || q == null) throw new NullPointerException("Null Point element");
         if (p.compareTo(q) == 0)    throw new IllegalArgumentException("Duplicate point");
     }
     
-    private void addSgmt(Point[] pointSet, int idx, Point endPoint)
+    private void addSgmt(Point srtPoint, Point endPoint)
     {
-        double slope = pointSet[idx].slopeTo(endPoint);
+        double slope = srtPoint.slopeTo(endPoint);
         
-        for (int i = 0; i < idx; ++i)
-            if (pointSet[i].slopeTo(endPoint) == slope) return;
-//        for (Point ep : endPointOfSgmts)
-//        {
-//            if (ep.compareTo(endPoint) == 0)
-//                if (slopeOfSgmts.get(i) == srtPoint.slopeTo(endPoint))
-//                    return;
-//            i++;
-//        }
-        lineSgmts.add(new LineSegment(pointSet[idx], endPoint));
-//        endPointOfSgmts.add(endPoint);
-//        slopeOfSgmts.add(srtPoint.slopeTo(endPoint));
+        for (Point p : pointSet)
+        {
+            if (p == srtPoint) break;
+            if (p.slopeTo(endPoint) == slope) return;
+        }
+        lineSgmts.add(new LineSegment(srtPoint, endPoint));
     }
 
     public int numberOfSegments()        // the number of line segments
@@ -115,7 +108,6 @@ public class FastCollinearPoints
         StdDraw.show();
 
         // print and draw the line segments
-        Stopwatch timer = new Stopwatch();
         FastCollinearPoints collinear = new FastCollinearPoints(points);
         for (LineSegment segment : collinear.segments())
         {
@@ -123,6 +115,5 @@ public class FastCollinearPoints
             segment.draw();
         }
         StdDraw.show();
-        StdOut.println(timer.elapsedTime());
     }
 }

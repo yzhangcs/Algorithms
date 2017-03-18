@@ -1,29 +1,34 @@
+import java.util.ArrayList;
 import java.util.Arrays;
-
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.LinkedQueue;
+import edu.princeton.cs.algs4.Quick;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.Quick;
 
+/**
+ * 
+ *
+ * @author zhangyu
+ * @date 2017.3.19
+ */
 public class BruteCollinearPoints
 {
-    private LinkedQueue<LineSegment> lineSgmts;
+    private ArrayList<LineSegment> lineSgmts; // ArrayList to save line segments
+    private Point[] pointSet;                 // copy of the give array points
     
-    public BruteCollinearPoints(Point[] points)    // finds all line segments containing 4 points
+    /**
+     * Finds all line segments containing 4 points.
+     * 
+     * @param points the given Point array
+     */
+    public BruteCollinearPoints(Point[] points)    // 
     {
-        if (points == null) throw new NullPointerException();
+        if (points == null) throw new NullPointerException("Null Point array");
         
-        Point[] pointSet = Arrays.copyOf(points, points.length);
+        int len = points.length;
         
-        lineSgmts = new LinkedQueue<LineSegment>();
-        findCollinearPoints(pointSet);
-    }
-    
-    private void findCollinearPoints(Point[] pointSet)
-    {
-        int len = pointSet.length;
-        
+        pointSet = Arrays.copyOf(points, points.length);
+        lineSgmts = new ArrayList<LineSegment>();
         for (int i = 0; i < len; ++i)
         {
             for (int j = i + 1; j < len; ++j)
@@ -42,7 +47,7 @@ public class BruteCollinearPoints
                                                  pointSet[k], pointSet[l]};
                                 
                                 Quick.sort(tuple);
-                                lineSgmts.enqueue(new LineSegment(tuple[0], tuple[3]));
+                                lineSgmts.add(new LineSegment(tuple[0], tuple[3]));
                             }
                         }
                     }
@@ -51,9 +56,11 @@ public class BruteCollinearPoints
         }
     }
     
+    // check whether or not duplicate point exists
     private void checkForDuplicates(Point p, Point q)
     {
-        if (p == null || q == null) throw new NullPointerException();
+        // ensure each point is not null
+        if (p == null || q == null) throw new NullPointerException("Null Point element");
         if (p.compareTo(q) == 0)    throw new IllegalArgumentException("Duplicate point");
     }
     

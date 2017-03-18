@@ -3,7 +3,12 @@ import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdRandom;
 
-
+/**
+ * 
+ *
+ * @author zhangyu
+ * @date 2017.3.19
+ */
 public class Point implements Comparable<Point> 
 {
 
