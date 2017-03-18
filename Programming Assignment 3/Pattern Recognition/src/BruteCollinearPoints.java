@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.LinkedQueue;
 import edu.princeton.cs.algs4.StdOut;
@@ -12,28 +14,35 @@ public class BruteCollinearPoints
     {
         if (points == null) throw new NullPointerException();
         
-        int len = points.length;
+        Point[] pointSet = Arrays.copyOf(points, points.length);
         
         lineSgmts = new LinkedQueue<LineSegment>();
+        findCollinearPoints(pointSet);
+    }
+    
+    private void findCollinearPoints(Point[] pointSet)
+    {
+        int len = pointSet.length;
+        
         for (int i = 0; i < len; ++i)
         {
             for (int j = i + 1; j < len; ++j)
-                if (points[i].compareTo(points[j]) == 0)
-                    throw new IllegalArgumentException("Repeated point");
-            for (int j = i + 1; j < len; ++j)
             {
+                checkForDuplicates(pointSet[i], pointSet[j]);
                 for (int k = j + 1; k < len; ++k)
-                {
-                    if (points[i].slopeTo(points[j]) == points[i].slopeTo(points[k]))
+                { 
+                    if (pointSet[i].slopeTo(pointSet[j]) == pointSet[i].slopeTo(pointSet[k]))
                     {
                         for (int l = k + 1; l < len; ++l)
                         {
-                            if (points[i].slopeTo(points[j]) == points[i].slopeTo(points[l]))
+                            if (pointSet[i].slopeTo(pointSet[k]) 
+                                    == pointSet[i].slopeTo(pointSet[l]))
                             {
-                                Point[] pointSet = {points[i], points[j], points[k], points[l]};
+                                Point[] tuple = {pointSet[i], pointSet[j], 
+                                                 pointSet[k], pointSet[l]};
                                 
-                                Quick.sort(pointSet);
-                                lineSgmts.enqueue(new LineSegment(pointSet[0], pointSet[3]));                   
+                                Quick.sort(tuple);
+                                lineSgmts.enqueue(new LineSegment(tuple[0], tuple[3]));
                             }
                         }
                     }
@@ -41,10 +50,18 @@ public class BruteCollinearPoints
             }
         }
     }
+    
+    private void checkForDuplicates(Point p, Point q)
+    {
+        if (p == null || q == null) throw new NullPointerException();
+        if (p.compareTo(q) == 0)    throw new IllegalArgumentException("Duplicate point");
+    }
+    
     public int numberOfSegments()        // the number of line segments
     {
         return lineSgmts.size(); 
     }
+    
     public LineSegment[] segments()                // the line segments
     {
         LineSegment[] sgmts = new LineSegment[numberOfSegments()];
