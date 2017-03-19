@@ -4,14 +4,13 @@ import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdRandom;
 
 /**
- * 
+ * The {@code Point} class represents a point in the plane
  *
  * @author zhangyu
  * @date 2017.3.19
  */
 public class Point implements Comparable<Point> 
 {
-
     private final int x; // x-coordinate of this point
     private final int y; // y-coordinate of this point
 
@@ -124,6 +123,8 @@ public class Point implements Comparable<Point>
 
     /**
      * Unit tests the Point data type.
+     * 
+     * @param args the command-line arguments
      */
     public static void main(String[] args) 
     {
@@ -146,14 +147,12 @@ public class Point implements Comparable<Point>
             points[i] = new Point(x, y);
             points[i].draw();
         }
-
         // draw p = (x0, x1) in red
         Point p = new Point(x0, y0);
+
         StdDraw.setPenColor(StdDraw.RED);
         StdDraw.setPenRadius(0.02);
         p.draw();
-
-
         // draw line segments from p to each point, one at a time, in polar order
         StdDraw.setPenRadius();
         StdDraw.setPenColor(StdDraw.BLUE);
