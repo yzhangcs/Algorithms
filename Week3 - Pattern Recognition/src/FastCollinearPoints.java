@@ -105,7 +105,7 @@ public class FastCollinearPoints
      */
     public LineSegment[] segments()                // the line segments
     {
-        return (LineSegment[]) lineSgmts.toArray(new LineSegment[numberOfSegments()]);
+        return lineSgmts.toArray(new LineSegment[numberOfSegments()]);
     }
     
     /**

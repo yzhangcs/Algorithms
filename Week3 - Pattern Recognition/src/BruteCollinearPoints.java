@@ -89,7 +89,7 @@ public class BruteCollinearPoints
      */
     public LineSegment[] segments()
     {
-        return (LineSegment[]) lineSgmts.toArray(new LineSegment[numberOfSegments()]);
+        return lineSgmts.toArray(new LineSegment[numberOfSegments()]);
     }
 
     /**
