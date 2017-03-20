@@ -16,7 +16,7 @@ import edu.princeton.cs.algs4.StdOut;
 public class FastCollinearPoints
 {
     private ArrayList<LineSegment> lineSgmts; // ArrayList to save line segments
-    private Point[] pointSet;                 // copy of the give array points
+    private Point[] pointSet;                 // copy of the give Point array
     
     /**
      * Finds all line segments containing 4 or more points.
