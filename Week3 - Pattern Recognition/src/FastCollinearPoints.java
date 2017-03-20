@@ -35,34 +35,64 @@ public class FastCollinearPoints
         Merge.sort(pointSet); // sort the array by compareTo() method in Point class
         for (int i = 0; i < len - 1; ++i)
         {
-            int cnt = 1, subLen = len - i - 1;
-            double slope = Double.NEGATIVE_INFINITY;
-            double lastSlope = Double.NEGATIVE_INFINITY;
-            Point[] subPointSet = new Point[subLen];
+            double[] slopesBefore = new double[i]; // slopes of previous points to pointSet[i]
+            Point[] pointsAfter = new Point[len - i - 1]; // points after pointSet[i]
             
-            for (int j = 0; j < subLen; ++j) subPointSet[j] = pointSet[i + j + 1];
-            // points that have equal slopes with respect to p are collinear, 
-            // and sorting brings such points together
-            Arrays.sort(subPointSet, pointSet[i].slopeOrder());
-            for (int j = 0; j < subLen; ++j) 
-            {
-                checkForDuplicates(pointSet[i], subPointSet[j]);
-                slope = pointSet[i].slopeTo(subPointSet[j]);
-                if (lastSlope != slope) // if current slope isn't equal to the last
-                {
-                    // 4 or more points are collinear, then add them to the sgmts set.
-                    if (cnt >= 3) addSgmt(pointSet[i], subPointSet[j - 1]); 
-                    cnt = 1;
-                }
-                else cnt++;
-                lastSlope = slope;
-            }
-            // the last sgmt can be left out when the loop terminates
-            if (cnt >= 3) addSgmt(pointSet[i], subPointSet[subLen - 1]); 
+            for (int j = 0; j < i; ++j) 
+                slopesBefore[j] = pointSet[i].slopeTo(pointSet[j]);
+            for (int j = 0; j < len - i - 1; ++j) pointsAfter[j] = pointSet[i + j + 1];
+            Arrays.sort(slopesBefore); // for binary search
+            // sorting brings points collinear with pointSet[i] together
+            Arrays.sort(pointsAfter, pointSet[i].slopeOrder());
+            addNewSgmts(slopesBefore, pointSet[i], pointsAfter);   
         }
     }
     
-    // check whether or not duplicate point exists
+    // add segments to the set if they are not sub-segments
+    private void addNewSgmts(double[] slopesBefore, Point srtPoint, Point[] pointsAfter)
+    {
+        int cnt = 1;
+        int lenOfSub = pointsAfter.length;
+        double slope = Double.NEGATIVE_INFINITY;
+        double lastSlope = Double.NEGATIVE_INFINITY;
+        
+        for (int j = 0; j < lenOfSub; ++j) 
+        {
+            checkForDuplicates(srtPoint, pointsAfter[j]);
+            slope = srtPoint.slopeTo(pointsAfter[j]);
+            if (lastSlope != slope) // if current slope isn't equal to the last
+            {
+                // 4 or more points are collinear, then add them to the sgmts set.
+                if (cnt >= 3 && !isSubSgmt(slopesBefore, lastSlope)) 
+                    lineSgmts.add(new LineSegment(srtPoint, pointsAfter[j - 1])); 
+                cnt = 1;
+            }
+            else cnt++;
+            lastSlope = slope;
+        }
+        // the last sgmt can be left out when the loop terminates
+        if (cnt >= 3 && !isSubSgmt(slopesBefore, lastSlope)) 
+            lineSgmts.add(new LineSegment(srtPoint, pointsAfter[lenOfSub - 1]));
+    }
+    
+    // determine if the segment is a sub-segment of the previous segments
+    private boolean isSubSgmt(double[] slopesBefore, double slope)
+    {
+        int lo = 0;
+        int hi = slopesBefore.length - 1;
+        
+        // use binary search
+        while (lo <= hi) 
+        {
+            int mid = lo + (hi - lo) / 2;
+            if      (slope < slopesBefore[mid]) hi = mid - 1;
+            else if (slope > slopesBefore[mid]) lo = mid + 1;
+            else return true;
+        }
+        return false;
+    }
+    
+    // check whether duplicate point exists
     private void checkForDuplicates(Point p, Point q)
     {
         // ensure each point is not null
@@ -70,24 +100,6 @@ public class FastCollinearPoints
         if (p.compareTo(q) == 0)    throw new IllegalArgumentException("Duplicate point");
     }
     
-    // add new segment to the segment set if it is a maximal
-    // line segment containing the two endpoints.
-    private void addSgmt(Point srtPoint, Point endPoint)
-    {
-        // calculate the slope of current line segment.
-        double slope = srtPoint.slopeTo(endPoint);
-        
-        // check if current sgmt is part of the previous ones
-        for (Point p : pointSet)
-        {
-            if (p == srtPoint) break;
-            // if srtPoint, endPoint and previous one are collinear, that is 
-            // to say current sgmt has been contained because pointSet is sorted
-            if (p.slopeTo(endPoint) == slope) return;
-        }
-        lineSgmts.add(new LineSegment(srtPoint, endPoint));
-    }
-
     /**
      * Returns the number of line segments.
      * 
