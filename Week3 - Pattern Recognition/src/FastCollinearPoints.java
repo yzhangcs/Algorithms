@@ -39,7 +39,7 @@ public class FastCollinearPoints
             Point[] pointsAfter = new Point[len - i - 1]; // points after pointSet[i]
             
             for (int j = 0; j < i; ++j) 
-                slopesBefore[j] = pointSet[i].slopeTo(pointSet[j]);
+                slopesBefore[j] = pointSet[j].slopeTo(pointSet[i]);
             for (int j = 0; j < len - i - 1; ++j) pointsAfter[j] = pointSet[i + j + 1];
             Arrays.sort(slopesBefore); // for binary search
             // sorting brings points collinear with pointSet[i] together

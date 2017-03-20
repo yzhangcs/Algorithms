@@ -8,7 +8,7 @@ As an optimization, the method stops comparison immediately when finding three p
 The order of growth of the running time of **BruteCollinearPoints** is *n<sup>4* in the worst case
 
 **FastCollinearPoints**  
-Different from **BruteCollinearPoints**, it sort the array before the for loop so taht each point is a origin point compared to the latter.  
+Different from **BruteCollinearPoints**, the implementation sorts the array before the for loop so that each point is a origin point compared to the latter.  
 For each origin point p, continue to sort its latter points according to the slopes they makes with p. Points that have equal slopes with respect to p are collinear, and sorting brings such points together.  
 When a matching result is found, a sub-segment check is required. For efficiency, here uses the Binary Search.  
 The order of growth of the running time of **FastCollinearPoints** is *n<sup>2</sup>log n* in the worst case.
