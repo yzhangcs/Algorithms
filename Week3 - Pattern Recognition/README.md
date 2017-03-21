@@ -1,4 +1,4 @@
-# **Deques and Randomized Queues** 
+# **Pattern Recognition** 
 
 Write a program to recognize line patterns in a given set of points. 
 
