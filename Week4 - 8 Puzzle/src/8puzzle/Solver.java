@@ -32,8 +32,8 @@ public class Solver
      */
     public boolean isSolvable()
     {
-        while (currSearchNode.bd != null && !currSearchNode.bd.isGoal() && 
-               twinSearchNode.bd != null && !twinSearchNode.bd.isGoal())
+        while (currSearchNode.bd !=null && !currSearchNode.bd.isGoal() && 
+               twinSearchNode.bd !=null && !twinSearchNode.bd.isGoal())
         {
             for (Board nb : currSearchNode.bd.neighbors())
                 if (currSearchNode.previous == null || 
