@@ -32,21 +32,21 @@ public class Solver
      */
     public boolean isSolvable()
     {
-        while (currSearchNode.bd != null && !currSearchNode.bd.isGoal() && 
-               twinSearchNode.bd != null && !twinSearchNode.bd.isGoal())
+        while (!currSearchNode.getBoard().isGoal() && 
+               !twinSearchNode.getBoard().isGoal())
         {
-            for (Board nb : currSearchNode.bd.neighbors())
-                if (currSearchNode.previous == null || 
-                    !nb.equals(currSearchNode.previous.bd))
+            for (Board nb : currSearchNode.getBoard().neighbors())
+                if (currSearchNode.getPreSearchNode() == null || 
+                    !nb.equals(currSearchNode.getPreSearchNode().getBoard()))
                     initPQ.insert(new SearchNode(nb, currSearchNode));
-            for (Board nb : twinSearchNode.bd.neighbors())
-                if (twinSearchNode.previous == null || 
-                    !nb.equals(twinSearchNode.previous.bd))
+            for (Board nb : twinSearchNode.getBoard().neighbors())
+                if (twinSearchNode.getPreSearchNode() == null || 
+                    !nb.equals(twinSearchNode.getPreSearchNode().getBoard()))
                     twinPQ.insert(new SearchNode(nb, twinSearchNode));
             currSearchNode = initPQ.delMin();
             twinSearchNode = twinPQ.delMin();
         }
-        return currSearchNode.bd.isGoal();
+        return currSearchNode.getBoard().isGoal();
     }
     
     /**
@@ -97,6 +97,10 @@ public class Solver
         }   
         public int compareTo(SearchNode that)
         { return this.priority - that.priority; }
+        public Board getBoard()
+        { return this.bd; }
+        public SearchNode getPreSearchNode()
+        { return this.previous; }
     }
 
     /**
