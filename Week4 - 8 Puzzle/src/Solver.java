@@ -3,110 +3,140 @@ import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
+/**
+ * The {@code Solver} class provides solution for the 
+ * 8-puzzle problem (and its natural generalizations) 
+ * using the A* search algorithm. 
+ *
+ * @author zhangyu
+ * @date 2017.3.29
+ */
 public class Solver 
 {
-    private MinPQ<SearchNode> initPQ;
-    private MinPQ<SearchNode> twinPQ;
-    private SearchNode currSearchNode;
-    private SearchNode twinSearchNode;
+    private SearchNode current; // current search node
+    private boolean isSolvable;
+    
+    // the class implements the compareTo() method for MinPQ
+    private class SearchNode implements Comparable<SearchNode>
+    {
+        private Board bd;
+        private SearchNode previous;
+        private int moves;
+        private int priority; // cache the priority to avoid repeated calculations
+        private boolean isInitParity; // is equal to initial parity
+        
+        // this constructor is used for initail node and its twin
+        public SearchNode(Board bd, boolean isInitParity) 
+        {
+            if (bd == null) 
+                throw new NullPointerException("Null Board");          
+            this.bd = bd;
+            this.moves = 0;
+            this.priority = this.bd.manhattan() + this.moves;
+            this.isInitParity = isInitParity;
+        }   
+        
+        // for the later nodes
+        public SearchNode(Board bd, SearchNode previous)
+        {
+            if (bd == null) 
+                throw new NullPointerException("Null Board");
+            if (previous == null) 
+                throw new NullPointerException("Null SearchNode");   
+            this.bd = bd;
+            this.previous = previous;
+            this.moves = previous.moves + 1;
+            this.priority = this.bd.manhattan() + this.moves;
+            this.isInitParity = previous.isInitParity;
+        }   
+        
+        public int compareTo(SearchNode that)
+        { 
+            // When two search nodes have the same Manhattan priority, 
+            // break ties by comparing the Manhattan distances of the two boards. 
+            if (this.priority == that.priority) 
+                return this.bd.manhattan() - this.bd.manhattan();
+            else 
+                return this.priority - that.priority; 
+        }
+    }
+
     
     /**
-     * find a solution to the initial board (using the A* algorithm)
+     * Find a solution to the initial board (using the A* algorithm).
      * 
-     * @param initial
+     * @param initial the initial Board
+     * @throws NullPointerException if initial Board is null
      */
     public Solver(Board initial)
     {
-        if (initial == null) throw new NullPointerException("Null Board");
+        if (initial == null) throw new NullPointerException("Null Board");  
+
+        MinPQ<SearchNode> origPQ = new MinPQ<SearchNode>();
         
-        initPQ = new MinPQ<SearchNode>();
-        twinPQ = new MinPQ<SearchNode>();
-        currSearchNode = new SearchNode(initial, null);
-        twinSearchNode = new SearchNode(initial.twin(), null);
+        // isInitParity of initial is true, and another is false.
+        origPQ.insert(new SearchNode(initial, true)); // insert initial node and its twin
+        origPQ.insert(new SearchNode(initial.twin(), false));
+        while (true)
+        {
+            current = origPQ.delMin();
+            if (current.bd.isGoal()) break;
+            for (Board nb : current.bd.neighbors())
+                if (current.previous == null || 
+                    !nb.equals(current.previous.bd))
+                    origPQ.insert(new SearchNode(nb, current));          
+        } // only one of the two nodes can lead to the goal board
+        isSolvable = current.isInitParity && current.bd.isGoal();
     }
     
     /**
-     * is the initial board solvable?
+     * Determines whether the initial board is solvable?
      * 
-     * @return
+     * @return true if the initial board is solvable;
+     *         false otherwise.
      */
     public boolean isSolvable()
     {
-        while (!currSearchNode.getBoard().isGoal() && 
-               !twinSearchNode.getBoard().isGoal())
-        {
-            for (Board nb : currSearchNode.getBoard().neighbors())
-                if (currSearchNode.getPreSearchNode() == null || 
-                    !nb.equals(currSearchNode.getPreSearchNode().getBoard()))
-                    initPQ.insert(new SearchNode(nb, currSearchNode));
-            for (Board nb : twinSearchNode.getBoard().neighbors())
-                if (twinSearchNode.getPreSearchNode() == null || 
-                    !nb.equals(twinSearchNode.getPreSearchNode().getBoard()))
-                    twinPQ.insert(new SearchNode(nb, twinSearchNode));
-            currSearchNode = initPQ.delMin();
-            twinSearchNode = twinPQ.delMin();
-        }
-        return currSearchNode.getBoard().isGoal();
+        return this.isSolvable;
     }
     
     /**
-     * min number of moves to solve initial board; -1 if unsolvable
+     * Returns min number of moves to solve initial board; -1 if unsolvable.
      * 
-     * @return
+     * @return min number of moves to solve initial board; -1 if unsolvable
      */
     public int moves()
     {
         if (!isSolvable()) return -1;
-        else return currSearchNode.moves;
+        else return current.moves;
     }
     
     /**
-     * sequence of boards in a shortest solution; null if unsolvable
+     * Returns sequence of boards in a shortest solution; null if unsolvable.
      * 
-     * @return
+     * @return sequence of boards in a shortest solution;
+     *         null if unsolvable.
      */
     public Iterable<Board> solution()
     {
         if (!isSolvable()) return null;
         
         Stack<Board> boards = new Stack<Board>();
+        SearchNode node = current; // another reference
         
-        while (currSearchNode != null) 
+        while (node != null) 
         {
-            boards.push(currSearchNode.bd);
-            currSearchNode = currSearchNode.previous;
+            boards.push(node.bd);
+            node = node.previous;
         }
         return boards;
     }
     
-    private class SearchNode implements Comparable<SearchNode>
-    {
-        private Board bd;
-        private SearchNode previous;
-        private int manhattan;
-        private int moves;
-        private int priority;
-        
-        public SearchNode(Board bd, SearchNode previous)
-        {
-            this.bd = bd;
-            this.previous = previous;
-            this.manhattan = this.bd.manhattan();
-            this.moves = previous != null ? previous.moves + 1 : 0;
-            this.priority = this.manhattan + this.moves;
-        }   
-        public int compareTo(SearchNode that)
-        { return this.priority - that.priority; }
-        public Board getBoard()
-        { return this.bd; }
-        public SearchNode getPreSearchNode()
-        { return this.previous; }
-    }
-
     /**
-     * solve a slider puzzle (given below)
-     * 
-     * @param args
+     * Unit tests the {@code solver} data type to 
+     * solve a slider puzzle (given below).
+     *
+     * @param args the command-line arguments
      */
     public static void main(String[] args)
     {
