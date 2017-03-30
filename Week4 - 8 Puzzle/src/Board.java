@@ -152,12 +152,12 @@ public class Board
             if (blocks1D[idxOfBlank] == 0) break;
         for (int i = 0; i < 4; ++i)
         {
-            int rolOfNB = idxOfBlank / n + xDiff[i];
-            int rowOfNB = idxOfBlank % n + yDiff[i];
+            int rowOfNB = idxOfBlank / n + xDiff[i];
+            int colOfNB = idxOfBlank % n + yDiff[i];
             
-            if (rolOfNB >= 0 && rolOfNB < n && rowOfNB >= 0 && rowOfNB < n)
+            if (rowOfNB >= 0 && rowOfNB < n && colOfNB >= 0 && colOfNB < n)
             {
-                idxOfNB = rolOfNB * n + rowOfNB;
+                idxOfNB = rowOfNB * n + colOfNB;
                 swappedBlocks = getSwappedBlocks(idxOfBlank, idxOfNB);
                 neighbors.push(new Board(swappedBlocks));
             }
