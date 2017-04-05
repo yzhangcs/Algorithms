@@ -1,6 +1,8 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.SET;
+import edu.princeton.cs.algs4.StdDraw;
 
 /**
  * 
@@ -10,12 +12,14 @@ import edu.princeton.cs.algs4.RectHV;
  */
 public class PointSET
 {
+    private SET<Point2D> points;
+    
     /**
      * construct an empty set of points 
      */
     public PointSET()
     {
-          
+        points = new SET<Point2D>();
     }
     
     /**
@@ -25,7 +29,7 @@ public class PointSET
      */
     public boolean isEmpty()
     {
-        return false;
+        return points.isEmpty();
     }
     
     /**
@@ -35,7 +39,7 @@ public class PointSET
      */
     public int size()
     {
-         return 0;
+        return points.size();
     }
     
     /**
@@ -45,7 +49,8 @@ public class PointSET
      */
     public void insert(Point2D p)
     {
-         
+        if (p == null) throw new NullPointerException("Null point");
+        points.add(p);
     }
     
     /**
@@ -56,7 +61,8 @@ public class PointSET
      */
     public boolean contains(Point2D p)
     {
-         return false;
+        if (p == null) throw new NullPointerException("Null point");       
+        return points.contains(p);
     }
     
     /**
@@ -65,7 +71,10 @@ public class PointSET
      */
     public void draw()
     {
-         
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.01);
+        for (Point2D point : points)
+            point.draw();
     }
     
     /**
@@ -76,7 +85,13 @@ public class PointSET
      */
     public Iterable<Point2D> range(RectHV rect)
     {
-         return new Queue<Point2D>();
+        if (rect == null) throw new NullPointerException("Null rectangle");   
+        
+        Queue<Point2D> pointsInRect = new Queue<Point2D>();
+
+        for (Point2D point : points)
+            if (rect.contains(point)) pointsInRect.enqueue(point); 
+        return pointsInRect;
     }
     
     /**
@@ -87,7 +102,22 @@ public class PointSET
      */
     public Point2D nearest(Point2D p)
     {
-         return new Point2D(1.0, 1.0);
+        if (p == null) throw new NullPointerException("Null point");  
+        
+        Point2D nearestPoint = points.min();
+        Double minDist = Double.POSITIVE_INFINITY;
+        
+        for (Point2D point : points)
+        {
+            Double dist = p.distanceTo(point);
+            
+            if (minDist > dist) 
+            {
+                nearestPoint = point;
+                minDist = dist;
+            }
+        }
+        return nearestPoint;
     }
     
     /**
@@ -97,6 +127,6 @@ public class PointSET
      */
     public static void main(String[] args)
     {
-         
+        
     }
 }
