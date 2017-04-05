@@ -33,7 +33,6 @@ public class NearestNeighborVisualizer {
             kdtree.insert(p);
             brute.insert(p);
         }
-
         while (true) {
 
             // the location (x, y) of the mouse

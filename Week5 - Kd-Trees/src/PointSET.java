@@ -105,11 +105,11 @@ public class PointSET
         if (p == null) throw new NullPointerException("Null point");  
         
         Point2D nearestPoint = points.min();
-        Double minDist = Double.POSITIVE_INFINITY;
+        double minDist = Double.POSITIVE_INFINITY;
         
         for (Point2D point : points)
         {
-            Double dist = p.distanceTo(point);
+            double dist = p.distanceTo(point);
             
             if (minDist > dist) 
             {
