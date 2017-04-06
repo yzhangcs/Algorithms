@@ -3,7 +3,6 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
 /**
@@ -104,7 +103,7 @@ public class KdTree
         return x;
     }
     
-    public int compare(Node x, Point2D p) 
+    private int compare(Node x, Point2D p) 
     {
         if (x.p.equals(p)) return 0;
         if (x.isEvenLevel) 
@@ -183,18 +182,18 @@ public class KdTree
     {
         if (rect == null) throw new NullPointerException("Null rectangle");
         
-        Queue<Point2D> pointsInRect = new Queue<Point2D>();
+        Queue<Point2D> pointQueue = new Queue<Point2D>();
         
-        range(root, pointsInRect, rect);
-        return pointsInRect;
+        range(root, pointQueue, rect);
+        return pointQueue;
     }
     
-    private void range(Node x, Queue<Point2D> pointsInRect, RectHV rect) 
+    private void range(Node x, Queue<Point2D> pointQueue, RectHV rect) 
     { 
         if (x == null) return; 
-        if (x.lb != null && rect.intersects(x.lb.rect)) range(x.lb, pointsInRect, x.lb.rect);
-        if (rect.contains(x.p)) pointsInRect.enqueue(x.p);
-        if (x.rt != null && rect.intersects(x.rt.rect)) range(x.rt, pointsInRect, x.rt.rect);
+        if (rect.contains(x.p)) pointQueue.enqueue(x.p);
+        if (x.lb != null && rect.intersects(x.lb.rect)) range(x.lb, pointQueue, rect);
+        if (x.rt != null && rect.intersects(x.rt.rect)) range(x.rt, pointQueue, rect);
     } 
     
     /**
@@ -206,51 +205,33 @@ public class KdTree
     public Point2D nearest(Point2D p)
     {
         if (p == null) throw new NullPointerException("Null point");
-        
-        Node nearest = nearest(root, p);
-        
-        return nearest.p;
+        if (root == null) return null;
+        return nearest(root, root.p, p);
     }
     
-    private Node nearest(Node x, Point2D p)
+    private Point2D nearest(Node x, Point2D nearest, Point2D p)
     {
-        Node nearest = x;
-        double dist = p.distanceTo(nearest.p);
+        if (x == null) return nearest;
         
-        if (x.lb != null) 
+        Point2D point = nearest;
+        int cmp = compare(x, p);
+        
+        if (p.distanceTo(x.p) < p.distanceTo(point)) point = x.p;
+        if (cmp < 0)
         {
-            if (p.distanceTo(x.lb.p) < p.distanceTo(nearest.p) && isUnique(x, x.lb, p)) 
-                return nearest(x.lb, p);
-            else 
-            {
-                Node nearestLB = nearest(x.lb, p);
-                
-                if (p.distanceTo(nearestLB.p) < p.distanceTo(nearest.p)) 
-                    nearest = nearestLB;
-            }
+            point = nearest(x.lb, point, p);
+            if (x.rt != null)
+                if (point.distanceSquaredTo(p) > x.rt.rect.distanceSquaredTo(p))
+                    point = nearest(x.rt, point, p);
         }
-        if (x.rt != null)
+        else if (cmp > 0)
         {
-            if (p.distanceTo(x.rt.p) < dist && isUnique(x, x.rt, p)) 
-                return nearest(x.rt, p);
-            else 
-            {
-                Node nearestRT = nearest(x.rt, p);
-                
-                if (p.distanceTo(nearestRT.p) < p.distanceTo(nearest.p)) 
-                    nearest = nearestRT;
-            }
+            point = nearest(x.rt, point, p);
+            if (x.lb != null)
+                if (point.distanceSquaredTo(p) > x.lb.rect.distanceSquaredTo(p))
+                    point = nearest(x.lb, point, p);
         }
-        return nearest;
-    }
-    
-    private boolean isUnique(Node x, Node child, Point2D p)
-    {
-        if (compare(x, p) != compare(x, child.p)) return false;
-        if (x.isEvenLevel) 
-            return Math.abs(p.x() - x.p.x()) > Math.abs(child.p.x() - x.p.x());
-        else
-            return Math.abs(p.y() - x.p.y()) > Math.abs(child.p.y() - x.p.y());
+        return point;
     }
     
     /**

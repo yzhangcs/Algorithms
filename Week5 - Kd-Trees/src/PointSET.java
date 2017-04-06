@@ -103,6 +103,7 @@ public class PointSET
     public Point2D nearest(Point2D p)
     {
         if (p == null) throw new NullPointerException("Null point");  
+        if (points.isEmpty()) return null;
         
         Point2D nearestPoint = points.min();
         double minDist = Double.POSITIVE_INFINITY;
