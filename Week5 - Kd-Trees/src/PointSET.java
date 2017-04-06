@@ -110,7 +110,7 @@ public class PointSET
         
         for (Point2D point : points)
         {
-            double dist = p.distanceTo(point);
+            double dist = p.distanceSquaredTo(point);
             
             if (minDist > dist) 
             {

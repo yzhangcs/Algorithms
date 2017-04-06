@@ -66,55 +66,58 @@ public class KdTree
     {
         if (p == null) throw new NullPointerException("Null point");
         
-        root = insert(root, p, new RectHV(0.0, 0.0, 1.0, 1.0), true);
+        root = insert(root, null, p, 0);
     }
     
-    private Node insert(Node x, Point2D p, RectHV rect, boolean isEvenLevel) 
+    private Node insert(Node x, Node parent, Point2D p, int direction) 
     {
         if (x == null)
         {
-            size++;
-            return new Node(p, rect, isEvenLevel);
+            if (size++ == 0) return new Node(p, new RectHV(0, 0, 1, 1), true);
+            
+            RectHV rectOfX = parent.rect;
+            
+            if (direction < 0) 
+            {
+                if (parent.isEvenLevel)
+                    rectOfX = new RectHV(parent.rect.xmin(), parent.rect.ymin(), 
+                                         parent.p.x(),       parent.rect.ymax());
+                else 
+                    rectOfX = new RectHV(parent.rect.xmin(), parent.rect.ymin(), 
+                                         parent.rect.xmax(), parent.p.y());
+            }
+            else if (direction > 0) 
+            {
+                if (parent.isEvenLevel)
+                    rectOfX = new RectHV(parent.p.x(),       parent.rect.ymin(), 
+                                         parent.rect.xmax(), parent.rect.ymax());
+                else
+                    rectOfX = new RectHV(parent.rect.xmin(), parent.p.y(), 
+                                         parent.rect.xmax(), parent.rect.ymax());
+            }
+            return new Node(p, rectOfX, !parent.isEvenLevel);
         }
         
-        int cmp = compare(x, p);
-        RectHV rectOfChild;
-        
-        if (cmp < 0) 
-        {
-            if (x.isEvenLevel)
-                rectOfChild = new RectHV(x.rect.xmin(), x.rect.ymin(), 
-                                         x.p.x(),       x.rect.ymax());
-            else 
-                rectOfChild = new RectHV(x.rect.xmin(), x.rect.ymin(), 
-                                         x.rect.xmax(), x.p.y());
-            x.lb = insert(x.lb, p, rectOfChild, !x.isEvenLevel);
-        }
-        else if (cmp > 0) 
-        {
-            if (x.isEvenLevel)
-                rectOfChild = new RectHV(x.p.x(),       x.rect.ymin(), 
-                                         x.rect.xmax(), x.rect.ymax());
-            else
-                rectOfChild = new RectHV(x.rect.xmin(), x.p.y(), 
-                                         x.rect.xmax(), x.rect.ymax());
-            x.rt = insert(x.rt, p, rectOfChild, !x.isEvenLevel);
-        }
+        int cmp = compare(p, x.p, x.isEvenLevel);
+
+        if      (cmp < 0) x.lb = insert(x.lb, x, p, cmp);
+        else if (cmp > 0) x.rt = insert(x.rt, x, p, cmp);
         return x;
-    }
+}
     
-    private int compare(Node x, Point2D p) 
+    private int compare(Point2D p, Point2D q, boolean isEvenLevel) 
     {
-        if (x.p.equals(p)) return 0;
-        if (x.isEvenLevel) 
+        if (p == null || q == null) throw new NullPointerException("Null point");
+        if (p.equals(q)) return 0;
+        if (isEvenLevel) 
         {
-            if (p.x() < x.p.x()) return -1;
-            else                 return 1;
+            if (p.x() < q.x()) return -1;
+            else               return 1;
         }
         else
         {
-            if (p.y() < x.p.y()) return -1;
-            else                 return 1;
+            if (p.y() < q.y()) return -1;
+            else               return 1;
         }
     }
     
@@ -135,7 +138,7 @@ public class KdTree
     {
         if (x == null) return false;
         
-        int cmp = compare(x, p);
+        int cmp = compare(p, x.p, x.isEvenLevel);
         
         if      (cmp < 0) return contains(x.lb, p);
         else if (cmp > 0) return contains(x.rt, p);
@@ -214,9 +217,9 @@ public class KdTree
         if (x == null) return nearest;
         
         Point2D point = nearest;
-        int cmp = compare(x, p);
+        int cmp = compare(p, x.p, x.isEvenLevel);
         
-        if (p.distanceTo(x.p) < p.distanceTo(point)) point = x.p;
+        if (p.distanceSquaredTo(x.p) < p.distanceSquaredTo(point)) point = x.p;
         if (cmp < 0)
         {
             point = nearest(x.lb, point, p);
