@@ -109,16 +109,8 @@ public class KdTree
     {
         if (p == null || q == null) throw new NullPointerException("Null point");
         if (p.equals(q)) return 0;
-        if (isEvenLevel) 
-        {
-            if (p.x() < q.x()) return -1;
-            else               return 1;
-        }
-        else
-        {
-            if (p.y() < q.y()) return -1;
-            else               return 1;
-        }
+        if (isEvenLevel) return p.x() < q.x() ? -1 : 1;
+        else             return p.y() < q.y() ? -1 : 1;
     }
     
     /**
