@@ -4,9 +4,15 @@ import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.Stopwatch;
 
 /**
- * 
+ * The {@code KdTree} class represents a set of points 
+ * in the unit square. It supports efficient 
+ * <em>range search</em> (find all of the points contained 
+ * in a query rectangle) and <em>nearest neighbor search</em> 
+ * (find a closest point to a query point) by using a 2d-tree.
  *
  * @author zhangyu
  * @date 2017.4.3
@@ -230,41 +236,69 @@ public class KdTree
     }
     
     /**
-     * unit testing of the methods (optional) 
-     * 
-     * @param args
+     * Unit tests the {@code KdTree} data type.
+     *
+     * @param args the command-line arguments
      */
     public static void main(String[] args)
     {
-        String filename = args[0];
-        In in = new In(filename);
-
-        StdDraw.enableDoubleBuffering();
-
-        // initialize the two data structures with point from standard input
-        KdTree kdtree = new KdTree();
-        while (!in.isEmpty()) 
+        double timeOfInsert = 0.0;
+        double timeOfNearest = 0.0;
+        double timeOfRange = 0.0;
+        KdTree Kdtree = new KdTree();
+        Stopwatch timer;
+        Point2D p;
+        
+        for (int i = 0; i < 1000000; i++)
         {
-            double x = in.readDouble();
-            double y = in.readDouble();
-            Point2D p = new Point2D(x, y);
-            kdtree.insert(p);
-            kdtree.draw();
-            StdDraw.show();
+            p = new Point2D(StdRandom.uniform(0.0, 1.0), 
+                            StdRandom.uniform(0.0, 1.0));
+            timer = new Stopwatch();
+            Kdtree.insert(p);
+            timeOfInsert += timer.elapsedTime();
         }
-        while (true)
+        StdOut.print("time cost of insert(random point)(1M times)    : ");
+        StdOut.println(timeOfInsert);
+        
+        for (int i = 0; i < 100; i++)
         {
-            if (StdDraw.mousePressed()) 
+            p = new Point2D(StdRandom.uniform(0.0, 1.0), 
+                            StdRandom.uniform(0.0, 1.0));
+            timer = new Stopwatch();
+            Kdtree.nearest(p);
+            timeOfNearest +=  timer.elapsedTime();
+        }
+        StdOut.print("time cost of nearest(random point)(100 times)  : ");
+        StdOut.println(timeOfNearest);
+        
+        for (int i = 0; i < 100; i++)
+        {
+            double xmin = StdRandom.uniform(0.0, 1.0);
+            double ymin = StdRandom.uniform(0.0, 1.0);
+            double xmax = StdRandom.uniform(0.0, 1.0);
+            double ymax = StdRandom.uniform(0.0, 1.0);
+            RectHV rect;
+            
+            if (xmin > xmax) 
             {
-                double x = StdDraw.mouseX();
-                double y = StdDraw.mouseY();
-                StdOut.printf("%8.6f %8.6f\n", x, y);
-                Point2D p = new Point2D(x, y);
-                p.draw();
-                p.drawTo(kdtree.nearest(p));
-                StdDraw.show();
+                double swap = xmin;
+                
+                xmin = xmax;
+                xmax = swap;
             }
-            StdDraw.pause(50);
+            if (ymin > ymax) 
+            {
+                double swap = ymin;
+                
+                ymin = ymax;
+                ymax = swap;
+            }
+            rect = new RectHV(xmin, ymin, xmax, ymax);
+            timer = new Stopwatch();
+            Kdtree.range(rect);
+            timeOfRange += timer.elapsedTime();
         }
+        StdOut.print("time cost of range(random rectangle)(100 times): ");
+        StdOut.println(timeOfRange);
     }
 }
