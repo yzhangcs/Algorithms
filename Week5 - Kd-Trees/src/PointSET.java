@@ -19,7 +19,7 @@ import edu.princeton.cs.algs4.Stopwatch;
  */
 public class PointSET
 {
-    private SET<Point2D> points; // the collection of points
+    private SET<Point2D> points; // set of points
     
     /**
      * Constructs an empty set of points.
@@ -91,7 +91,7 @@ public class PointSET
      * Returns all points that are inside the rectangle as an {@code Iterable}.
      * 
      * @param rect the rectangle 
-     * @return all points inside rect
+     * @return all points inside the rectangle 
      */
     public Iterable<Point2D> range(RectHV rect)
     {

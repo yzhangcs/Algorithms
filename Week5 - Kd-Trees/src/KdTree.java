@@ -1,4 +1,3 @@
-import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
@@ -24,11 +23,11 @@ public class KdTree
     
     private static class Node
     {
-        private Point2D p;      // the point
-        private RectHV rect;    // the axis-aligned rectangle corresponding to this node
-        private Node lb;        // the left/bottom subtree
-        private Node rt;        // the right/top subtree
-        private boolean isEvenLevel; 
+        private Point2D p;           // the point
+        private RectHV rect;         // the axis-aligned rectangle corresponding to this node
+        private Node lb;             // the left/bottom subtree
+        private Node rt;             // the right/top subtree
+        private boolean isEvenLevel; // is the node at even level
         
         public Node(Point2D p, RectHV rect, boolean isEvenLevel)
         {
@@ -39,14 +38,15 @@ public class KdTree
      }
     
     /**
-     * construct an empty set of points 
+     * Initializes an empty 2d-tree.
      */
     public KdTree() { }
     
     /**
-     * is the set empty? 
+     * Returns true if the 2d-tree is empty.
      * 
-     * @return
+     * @return true if the 2d-tree is empty; 
+     *         false otherwise
      */
     public boolean isEmpty()
     {
@@ -54,9 +54,9 @@ public class KdTree
     }
     
     /**
-     * number of points in the set 
+     * Returns the number of nodes in the 2d-tree.
      * 
-     * @return
+     * @return the number of nodes in the 2d-tree 
      */
     public int size()
     {
@@ -64,9 +64,10 @@ public class KdTree
     }
     
     /**
-     * add the point to the set (if it is not already in the set)
-     * 
-     * @param p
+     * Inserts point into the 2d-tree.
+     *
+     * @param  p the point
+     * @throws NullPointerException if the point is null
      */
     public void insert(Point2D p)
     {
@@ -79,25 +80,26 @@ public class KdTree
     {
         if (x == null)
         {
+            // if 2d-tree is null, then insert Node with a unit rectangle
             if (size++ == 0) return new Node(p, new RectHV(0, 0, 1, 1), true);
             
-            RectHV rectOfX = parent.rect;
+            RectHV rectOfX = parent.rect; // rectangle of Node x
             
-            if (direction < 0) 
+            if (direction < 0) // go left sub-tree
             {
-                if (parent.isEvenLevel)
+                if (parent.isEvenLevel) // left sub-rectangle
                     rectOfX = new RectHV(parent.rect.xmin(), parent.rect.ymin(), 
                                          parent.p.x(),       parent.rect.ymax());
-                else 
+                else  // bottom sub-rectangle
                     rectOfX = new RectHV(parent.rect.xmin(), parent.rect.ymin(), 
                                          parent.rect.xmax(), parent.p.y());
             }
-            else if (direction > 0) 
+            else if (direction > 0) // go right sub-tree
             {
-                if (parent.isEvenLevel)
+                if (parent.isEvenLevel)  // right sub-rectangle
                     rectOfX = new RectHV(parent.p.x(),       parent.rect.ymin(), 
                                          parent.rect.xmax(), parent.rect.ymax());
-                else
+                else // top sub-rectangle
                     rectOfX = new RectHV(parent.rect.xmin(), parent.p.y(), 
                                          parent.rect.xmax(), parent.rect.ymax());
             }
@@ -109,7 +111,7 @@ public class KdTree
         if      (cmp < 0) x.lb = insert(x.lb, x, p, cmp);
         else if (cmp > 0) x.rt = insert(x.rt, x, p, cmp);
         return x;
-}
+    }
     
     private int compare(Point2D p, Point2D q, boolean isEvenLevel) 
     {
@@ -120,10 +122,12 @@ public class KdTree
     }
     
     /**
-     * does the set contain point p? 
+     * Does the 2d-tree contain point p? 
      * 
-     * @param p
-     * @return
+     * @param p the point
+     * @return true if the 2d-tree contains p;
+     *         false otherwise
+     * @throws NullPointerException if the point is null
      */
     public boolean contains(Point2D p)
     {
@@ -144,8 +148,7 @@ public class KdTree
     }
     
     /**
-     * draw all points to standard draw 
-     * 
+     * Draws all points to standard draw.
      */
     public void draw()
     {
@@ -161,6 +164,7 @@ public class KdTree
         StdDraw.setPenRadius(0.01);
         x.p.draw();
         StdDraw.setPenRadius();
+        // draw the splitting line segment
         if (x.isEvenLevel) 
         {
             StdDraw.setPenColor(StdDraw.RED);
@@ -174,10 +178,10 @@ public class KdTree
     } 
     
     /**
-     * all points that are inside the rectangle 
+     * Returns all points that are inside the rectangle as an {@code Iterable}.
      * 
-     * @param rect
-     * @return
+     * @param rect the rectangle 
+     * @return all points inside the rectangle 
      */
     public Iterable<Point2D> range(RectHV rect)
     {
@@ -193,15 +197,17 @@ public class KdTree
     { 
         if (x == null) return; 
         if (rect.contains(x.p)) pointQueue.enqueue(x.p);
+        // if the left sub-rectangle intersects rect, then search the left-tree
         if (x.lb != null && rect.intersects(x.lb.rect)) range(x.lb, pointQueue, rect);
         if (x.rt != null && rect.intersects(x.rt.rect)) range(x.rt, pointQueue, rect);
     } 
     
     /**
-     * a nearest neighbor in the set to point p; null if the set is empty  
+     * Returns a nearest neighbor in the 2d-tree to point p; 
+     * null if the 2d-tree is empty.
      * 
-     * @param p
-     * @return
+     * @param p the point
+     * @return a nearest neighbor in the 2d-tree to p
      */
     public Point2D nearest(Point2D p)
     {
@@ -214,25 +220,25 @@ public class KdTree
     {
         if (x == null) return nearest;
         
-        Point2D point = nearest;
         int cmp = compare(p, x.p, x.isEvenLevel);
         
-        if (p.distanceSquaredTo(x.p) < p.distanceSquaredTo(point)) point = x.p;
+        if (p.distanceSquaredTo(x.p) < p.distanceSquaredTo(nearest)) nearest = x.p;
         if (cmp < 0)
         {
-            point = nearest(x.lb, point, p);
+            nearest = nearest(x.lb, nearest, p);
+            // compare the current nearest to the possible nearest in the other side
             if (x.rt != null)
-                if (point.distanceSquaredTo(p) > x.rt.rect.distanceSquaredTo(p))
-                    point = nearest(x.rt, point, p);
+                if (nearest.distanceSquaredTo(p) > x.rt.rect.distanceSquaredTo(p))
+                    nearest = nearest(x.rt, nearest, p);
         }
         else if (cmp > 0)
         {
-            point = nearest(x.rt, point, p);
+            nearest = nearest(x.rt, nearest, p);
             if (x.lb != null)
-                if (point.distanceSquaredTo(p) > x.lb.rect.distanceSquaredTo(p))
-                    point = nearest(x.lb, point, p);
+                if (nearest.distanceSquaredTo(p) > x.lb.rect.distanceSquaredTo(p))
+                    nearest = nearest(x.lb, nearest, p);
         }
-        return point;
+        return nearest;
     }
     
     /**
@@ -245,7 +251,7 @@ public class KdTree
         double timeOfInsert = 0.0;
         double timeOfNearest = 0.0;
         double timeOfRange = 0.0;
-        KdTree Kdtree = new KdTree();
+        KdTree kdtree = new KdTree();
         Stopwatch timer;
         Point2D p;
         
@@ -254,7 +260,7 @@ public class KdTree
             p = new Point2D(StdRandom.uniform(0.0, 1.0), 
                             StdRandom.uniform(0.0, 1.0));
             timer = new Stopwatch();
-            Kdtree.insert(p);
+            kdtree.insert(p);
             timeOfInsert += timer.elapsedTime();
         }
         StdOut.print("time cost of insert(random point)(1M times)    : ");
@@ -265,7 +271,7 @@ public class KdTree
             p = new Point2D(StdRandom.uniform(0.0, 1.0), 
                             StdRandom.uniform(0.0, 1.0));
             timer = new Stopwatch();
-            Kdtree.nearest(p);
+            kdtree.nearest(p);
             timeOfNearest +=  timer.elapsedTime();
         }
         StdOut.print("time cost of nearest(random point)(100 times)  : ");
@@ -295,7 +301,7 @@ public class KdTree
             }
             rect = new RectHV(xmin, ymin, xmax, ymax);
             timer = new Stopwatch();
-            Kdtree.range(rect);
+            kdtree.range(rect);
             timeOfRange += timer.elapsedTime();
         }
         StdOut.print("time cost of range(random rectangle)(100 times): ");
