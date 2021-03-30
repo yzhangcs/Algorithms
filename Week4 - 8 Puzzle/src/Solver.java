@@ -55,7 +55,7 @@ public class Solver
             // When two search nodes have the same Manhattan priority, 
             // break ties by comparing the Manhattan distances of the two boards. 
             if (this.priority == that.priority) 
-                return this.bd.manhattan() - this.bd.manhattan();
+                return this.bd.manhattan() - that.bd.manhattan();
             else 
                 return this.priority - that.priority; 
         }
